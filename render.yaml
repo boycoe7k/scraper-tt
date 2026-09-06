@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: zimsec-scraper
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: SOURCE_URL
+        value: https://zimsecpapers.github.io/
+      - key: MAX_CRAWL_DEPTH
+        value: 3
+      - key: MAX_PAGES
+        value: 250
+      - key: REQUEST_DELAY_MS
+        value: 1000
+      - key: MAX_DOWNLOAD_MB
+        value: 30
+      - key: CRON_SCHEDULE
+        value: "0 */6 * * *"
+      - key: SCRAPE_KEY
+        sync: false
+    disk:
+      name: zimsec-data
+      mountPath: /opt/render/project/src
+      sizeGB: 1
