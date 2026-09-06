@@ -21,18 +21,6 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.get("/api/scan-status", (req, res) => {
-  const state = getState();
-  res.json({
-    running: isRunning(),
-    lastScan: state.lastScan || null,
-    pagesVisited: state.pagesVisited || 0,
-    foundPdfs: state.foundPdfs || 0,
-    newPapers: state.newPapers || 0,
-    downloaded: state.downloaded || 0
-  });
-});
-
 app.get("/api/stats", (req, res) => {
   const papers = getPapers();
   const years = papers.map(p => p.year).filter(Boolean);
