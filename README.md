@@ -1,4 +1,4 @@
-# ZIMSEC Papers Scraper v4
+# ZIMSEC Papers Scraper v3
 
 A Node.js recursive crawler, PDF downloader and responsive web dashboard for publicly available ZIMSEC paper resources.
 
@@ -44,6 +44,3 @@ For production, use persistent storage or object storage for downloaded PDFs. Th
 ## Responsible use
 
 Only crawl resources you are permitted to access. Respect robots.txt, website terms, copyright, rate limits and server capacity. This project does not bypass authentication, paywalls or CAPTCHAs.
-
-## v4 frontend
-The dashboard uses inline SVG icons, animated counters, skeleton loading, animated cards, live crawler status polling, dark mode, and responsive layouts. No external icon/CDN dependency is required.
