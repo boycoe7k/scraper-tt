@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#146ef5">
+<title>ZIMSEC Papers — Library</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+
+<header class="nav">
+  <a class="brand" href="/">
+    <span class="brand-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v3H8v3h9v3H8v4h11v3H5z"/></svg></span>
+    <span><b>ZIMSEC</b><small>Papers</small></span>
+  </a>
+  <div class="nav-right">
+    <div class="live-pill"><span class="pulse"></span><span id="liveText">Crawler online</span></div>
+    <button class="tool-btn" id="themeBtn" aria-label="Toggle theme">
+      <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+    </button>
+    <button class="admin-btn" id="adminBtn">Admin scan</button>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-copy reveal">
+    <div class="kicker"><span></span> ZIMSEC RESOURCE INDEX</div>
+    <h1>Every paper.<br><em>One library.</em></h1>
+    <p>Search past papers, marking schemes and study resources with a fast, continuously updated archive.</p>
+  </div>
+  <div class="search-wrap reveal delay-1">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    <input id="search" placeholder="Search papers, subjects, years..." autocomplete="off">
+    <kbd>/</kbd>
+    <button id="clearSearch" aria-label="Clear search">×</button>
+  </div>
+</section>
+
+<section class="stats reveal delay-2">
+  <article class="stat"><div class="stat-icon blue"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg></div><div><span>Total papers</span><strong data-count="0" id="total">0</strong></div></article>
+  <article class="stat"><div class="stat-icon"><span>O</span></div><div><span>O Level</span><strong id="oLevel">0</strong></div></article>
+  <article class="stat"><div class="stat-icon"><span>A</span></div><div><span>A Level</span><strong id="aLevel">0</strong></div></article>
+  <article class="stat"><div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M12 3v4m0 10v4M3 12h4m10 0h4M5.6 5.6l2.8 2.8m7.2 7.2 2.8 2.8m0-12.8-2.8 2.8m-7.2 7.2-2.8 2.8"/></svg></div><div><span>Last scan</span><strong id="lastScan">Never</strong></div></article>
+</section>
+
+<section class="library reveal delay-3">
+  <div class="library-head">
+    <div><div class="section-kicker">ARCHIVE</div><h2>Paper library</h2><p id="resultCount">Loading archive</p></div>
+    <button class="refresh-btn" id="refreshBtn"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.9-4M4 5v5h5M4 13a8 8 0 0 0 14.9 4M20 19v-5h-5"/></svg> Refresh</button>
+  </div>
+
+  <div class="filters">
+    <div class="select-wrap"><select id="level"><option value="">All levels</option><option>O Level</option><option>A Level</option></select></div>
+    <div class="select-wrap"><select id="subject"><option value="">All subjects</option></select></div>
+    <div class="select-wrap"><select id="year"><option value="">All years</option></select></div>
+    <div class="select-wrap"><select id="session"><option value="">All sessions</option><option>June</option><option>November</option><option>May</option></select></div>
+    <div class="select-wrap"><select id="type"><option value="">All types</option><option>Paper</option><option>Marking Scheme</option><option>Green Book</option><option>Blue Book</option><option>Notes</option></select></div>
+    <button class="reset-btn" id="resetBtn">Reset</button>
+  </div>
+
+  <div id="papers" class="paper-grid"></div>
+  <div id="empty" class="empty hidden">
+    <div class="empty-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></div>
+    <h3>No papers found</h3><p>Try another search or clear a filter.</p>
+  </div>
+</section>
+</main>
+
+<footer><span>© <span id="yearNow"></span> ZIMSEC Papers</span><span>Automatic discovery engine</span></footer>
+
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <button class="modal-close" id="closeModal">×</button>
+    <div class="modal-icon"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 10-13h-7z"/></svg></div>
+    <div class="section-kicker">CONTROL CENTER</div><h2>Run a scan</h2>
+    <p>Start a crawler run to discover and download newly published PDFs.</p>
+    <input id="scrapeKey" type="password" placeholder="SCRAPE_KEY">
+    <button class="scan-btn" id="scanBtn">Start crawler <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+    <div class="scan-status" id="scanStatus"></div>
+  </div>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
