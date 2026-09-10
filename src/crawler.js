@@ -61,7 +61,8 @@ async function discoverScriptPdfs($, pageUrl, pdfs) {
 
 async function crawl() {
   const origin = new URL(config.sourceUrl).origin;
-  const queue = [{ url: config.sourceUrl, depth: 0 }];
+  const seeds = [config.sourceUrl, ...(config.sourceUrls || [])];
+  const queue = [...new Set(seeds)].map(url => ({ url, depth: 0 }));
   const visited = new Set();
   const pdfs = [];
 

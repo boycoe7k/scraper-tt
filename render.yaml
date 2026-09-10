@@ -8,7 +8,9 @@ services:
       - key: NODE_VERSION
         value: 20
       - key: SOURCE_URL
-        value: https://zimsecpapers.github.io/
+        value: https://www5.zimsec.co.zw/download-category/o-level/
+      - key: SOURCE_URLS
+        value: https://www5.zimsec.co.zw/download-category/a-level/
       - key: MAX_CRAWL_DEPTH
         value: 3
       - key: MAX_PAGES
