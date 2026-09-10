@@ -83,9 +83,12 @@
       </section>
 
       <section id="scrape" class="doc-section endpoint">
-        <div class="endpoint-head"><span class="method post">POST</span><code>/api/scrape</code></div><p>Starts a manual crawler run. This endpoint is intended for administrators and is protected when <code>SCRAPE_KEY</code> is configured in Render.</p>
+        <div class="endpoint-head"><span class="method post">POST</span><code>/api/scrape</code></div><p>Starts a manual crawler run. This endpoint is disabled unless <code>SCRAPE_KEY</code> is configured in Render. Send the key with either the <code>x-scrape-key</code> header or an OAuth-style Bearer token.</p>
         <pre><code>curl -X POST \
   -H <span class="code-blue">"x-scrape-key: YOUR_SCRAPE_KEY"</span> \
+  <span class="code-blue">"<span class="origin"></span>/api/scrape"</span></code></pre>
+        <pre><code>curl -X POST \
+  -H <span class="code-blue">"Authorization: Bearer YOUR_SCRAPE_KEY"</span> \
   <span class="code-blue">"<span class="origin"></span>/api/scrape"</span></code></pre>
         <div class="warning"><strong>Keep your key private.</strong><span>Do not place <code>SCRAPE_KEY</code> in browser code, public repositories or client-side applications. Store it as a Render environment variable.</span></div>
       </section>

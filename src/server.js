@@ -25,6 +25,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.get("/api/scan-status", (req, res) => {
+  res.json({ running: isRunning() });
+});
+
 app.get("/api/stats", (req, res) => {
   const papers = getPapers();
   const years = papers.map(p => p.year).filter(Boolean);
@@ -72,7 +76,13 @@ app.get("/api/papers/:id/download", (req, res) => {
 });
 
 app.post("/api/scrape", async (req, res) => {
-  if (config.scrapeKey && req.headers["x-scrape-key"] !== config.scrapeKey) {
+  const authorization = req.headers.authorization || "";
+  const bearerKey = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
+  const suppliedKey = req.headers["x-scrape-key"] || bearerKey;
+  if (!config.scrapeKey) {
+    return res.status(503).json({ error: "Scraping is disabled until SCRAPE_KEY is configured" });
+  }
+  if (suppliedKey !== config.scrapeKey) {
     return res.status(401).json({ error: "Invalid scrape key" });
   }
   try {
@@ -100,4 +110,10 @@ app.get("*", (req, res) => {
 
 app.listen(config.port, () => {
   console.log(`ZIMSEC Scraper running on port ${config.port}`);
+  if (getPapers().length === 0) {
+    console.log("[startup] Archive is empty; starting initial scan...");
+    scrape()
+      .then(result => console.log("[startup] Initial scan complete:", result))
+      .catch(error => console.error("[startup] Initial scan failed:", error.message));
+  }
 });
