@@ -6,6 +6,59 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// The current ZIMSEC site renders its catalog from js/default_papers.js rather
+// than putting PDF links in the HTML. Extract the JSON object assigned to dt.
+function extractObject(source, marker) {
+  const start = source.indexOf(marker);
+  if (start < 0) return null;
+  const open = source.indexOf("{", start);
+  if (open < 0) return null;
+
+  let depth = 0;
+  let quoted = false;
+  let escaped = false;
+  for (let i = open; i < source.length; i++) {
+    const char = source[i];
+    if (quoted) {
+      if (escaped) escaped = false;
+      else if (char === "\\") escaped = true;
+      else if (char === '"') quoted = false;
+      continue;
+    }
+    if (char === '"') quoted = true;
+    else if (char === "{") depth++;
+    else if (char === "}" && --depth === 0) return source.slice(open, i + 1);
+  }
+  return null;
+}
+
+async function discoverScriptPdfs($, pageUrl, pdfs) {
+  const scripts = [];
+  $("script[src]").each((_, el) => scripts.push($(el).attr("src")));
+
+  for (const src of scripts) {
+    try {
+      const scriptUrl = new URL(src, pageUrl).toString();
+      const response = await fetch(scriptUrl, { redirect: "follow" });
+      if (!response.ok) continue;
+      const source = await response.text();
+      if (!source.includes("downloadURL")) continue;
+
+      const object = extractObject(source, "let dt=");
+      if (!object) continue;
+      const records = JSON.parse(object);
+      for (const record of Object.values(records)) {
+        const url = record.downloadURL || record.downloadURL2 || record.s3Url;
+        if (!url || !/^https?:\/\//i.test(url)) continue;
+        pdfs.push({
+          url,
+          title: record.page_title || record.fileName || record.s3FileName || url
+        });
+      }
+    } catch {}
+  }
+}
+
 async function crawl() {
   const origin = new URL(config.sourceUrl).origin;
   const queue = [{ url: config.sourceUrl, depth: 0 }];
@@ -30,6 +83,8 @@ async function crawl() {
 
       const html = await res.text();
       const $ = cheerio.load(html);
+
+      await discoverScriptPdfs($, current.url, pdfs);
 
       $("a[href]").each((_, el) => {
         const href = $(el).attr("href");
