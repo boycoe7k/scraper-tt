@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#146ef5">
+<title>ZIMSEC Papers — API documentation</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/docs.css">
+</head>
+<body>
+<div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+<header class="nav">
+  <a class="brand" href="/">
+    <span class="brand-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v3H8v3h9v3H8v4h11v3H5z"/></svg></span>
+    <span><b>ZIMSEC</b><small>Papers</small></span>
+  </a>
+  <div class="nav-right"><a class="docs-link active" href="/docs">API docs</a><a class="back-link" href="/">Back to library</a></div>
+</header>
+<main class="docs-main">
+  <section class="docs-hero">
+    <div class="kicker"><span></span> DEVELOPER REFERENCE</div>
+    <h1>ZIMSEC Papers API</h1>
+    <p>Programmatic access to the searchable archive of ZIMSEC past papers, marking schemes and study resources.</p>
+    <div class="base-url"><span>BASE URL</span><code id="baseUrl"></code><button id="copyBase" type="button">Copy</button></div>
+  </section>
+
+  <div class="docs-layout">
+    <aside class="docs-sidebar">
+      <span>On this page</span>
+      <a href="#quickstart">Quick start</a>
+      <a href="#health">Health</a>
+      <a href="#stats">Statistics</a>
+      <a href="#papers">List papers</a>
+      <a href="#download">Download a paper</a>
+      <a href="#scrape">Run a scan</a>
+    </aside>
+    <div class="docs-content">
+      <section id="quickstart" class="doc-section">
+        <div class="section-kicker">GETTING STARTED</div><h2>Quick start</h2>
+        <p>All read endpoints return JSON and require no authentication. Replace the base URL below with your Render service URL when calling the API from another application.</p>
+        <pre><code>curl <span class="code-blue">"<span class="origin"></span>/api/papers?level=O%20Level&amp;limit=20"</span></code></pre>
+        <div class="note"><strong>Tip</strong><span>Use URL encoding for spaces and special characters in query parameters. The maximum page size is 500 papers.</span></div>
+      </section>
+
+      <section id="health" class="doc-section endpoint">
+        <div class="endpoint-head"><span class="method get">GET</span><code>/api/health</code></div><p>Returns service status, crawler state, source URL and the latest scan summary.</p>
+        <pre><code>{
+  <span class="key">"ok"</span>: <span class="bool">true</span>,
+  <span class="key">"running"</span>: <span class="bool">false</span>,
+  <span class="key">"source"</span>: <span class="string">"https://zimsecpapers.github.io/"</span>,
+  <span class="key">"state"</span>: { <span class="key">"lastScan"</span>: <span class="string">"2026-09-10T18:00:00.000Z"</span>, <span class="key">"foundPdfs"</span>: <span class="number">538</span> }
+}</code></pre>
+      </section>
+
+      <section id="stats" class="doc-section endpoint">
+        <div class="endpoint-head"><span class="method get">GET</span><code>/api/stats</code></div><p>Returns archive totals and the available values for level, subject and year filters.</p>
+        <pre><code>{
+  <span class="key">"total"</span>: <span class="number">538</span>,
+  <span class="key">"oLevel"</span>: <span class="number">350</span>,
+  <span class="key">"aLevel"</span>: <span class="number">188</span>,
+  <span class="key">"subjects"</span>: [<span class="string">"Mathematics"</span>, <span class="string">"Physics"</span>],
+  <span class="key">"years"</span>: [<span class="number">2024</span>, <span class="number">2023</span>],
+  <span class="key">"lastScan"</span>: <span class="string">"2026-09-10T18:00:00.000Z"</span>
+}</code></pre>
+      </section>
+
+      <section id="papers" class="doc-section endpoint">
+        <div class="endpoint-head"><span class="method get">GET</span><code>/api/papers</code></div><p>Search and filter papers. Results are ordered with the newest discovered papers first.</p>
+        <div class="params"><div><code>q</code><span>Search title, subject, level, session or type.</span></div><div><code>level</code><span><code>O Level</code> or <code>A Level</code></span></div><div><code>subject</code><span>Exact subject name, such as <code>Mathematics</code>.</span></div><div><code>year</code><span>Four-digit examination year.</span></div><div><code>session</code><span><code>June</code>, <code>November</code> or <code>May</code>.</span></div><div><code>type</code><span><code>Paper</code>, <code>Marking Scheme</code>, <code>Green Book</code>, <code>Blue Book</code> or <code>Notes</code>.</span></div><div><code>limit</code><span>Number of results, from 1 to 500. Defaults to 100.</span></div></div>
+        <pre><code>curl <span class="code-blue">"<span class="origin"></span>/api/papers?q=chemistry&amp;year=2012&amp;limit=10"</span></code></pre>
+        <pre><code>{ <span class="key">"total"</span>: <span class="number">1</span>, <span class="key">"papers"</span>: [{
+  <span class="key">"id"</span>: <span class="string">"a1b2c3..."</span>, <span class="key">"title"</span>: <span class="string">"ZIMSEC A Level Chemistry..."</span>,
+  <span class="key">"url"</span>: <span class="string">"https://...pdf"</span>, <span class="key">"level"</span>: <span class="string">"A Level"</span>,
+  <span class="key">"subject"</span>: <span class="string">"Chemistry"</span>, <span class="key">"year"</span>: <span class="number">2012</span>,
+  <span class="key">"session"</span>: <span class="string">"November"</span>, <span class="key">"paper"</span>: <span class="string">"Paper 6"</span>, <span class="key">"type"</span>: <span class="string">"Paper"</span>
+}] }</code></pre>
+      </section>
+
+      <section id="download" class="doc-section endpoint">
+        <div class="endpoint-head"><span class="method get">GET</span><code>/api/papers/:id/download</code></div><p>Downloads the locally cached PDF when available. If it is not cached, the request redirects to the original source PDF.</p>
+        <pre><code>curl -L -o paper.pdf <span class="code-blue">"<span class="origin"></span>/api/papers/a1b2c3.../download"</span></code></pre>
+      </section>
+
+      <section id="scrape" class="doc-section endpoint">
+        <div class="endpoint-head"><span class="method post">POST</span><code>/api/scrape</code></div><p>Starts a manual crawler run. This endpoint is intended for administrators and is protected when <code>SCRAPE_KEY</code> is configured in Render.</p>
+        <pre><code>curl -X POST \
+  -H <span class="code-blue">"x-scrape-key: YOUR_SCRAPE_KEY"</span> \
+  <span class="code-blue">"<span class="origin"></span>/api/scrape"</span></code></pre>
+        <div class="warning"><strong>Keep your key private.</strong><span>Do not place <code>SCRAPE_KEY</code> in browser code, public repositories or client-side applications. Store it as a Render environment variable.</span></div>
+      </section>
+    </div>
+  </div>
+</main>
+<footer><span>© <span id="yearNow"></span> ZIMSEC Papers</span><span>API reference</span></footer>
+<script src="/docs.js"></script>
+</body>
+</html>

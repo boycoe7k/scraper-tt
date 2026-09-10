@@ -12,6 +12,10 @@ const app = express();
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(path.join(process.cwd(), "public")));
 
+app.get("/docs", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "docs.html"));
+});
+
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
