@@ -110,8 +110,9 @@ app.get("*", (req, res) => {
 
 app.listen(config.port, () => {
   console.log(`ZIMSEC Scraper running on port ${config.port}`);
-  if (getPapers().length === 0) {
-    console.log("[startup] Archive is empty; starting initial scan...");
+  const state = getState();
+  if (getPapers().length === 0 || state.source !== config.sourceUrl) {
+    console.log("[startup] Archive needs an initial/source scan...");
     scrape()
       .then(result => console.log("[startup] Initial scan complete:", result))
       .catch(error => console.error("[startup] Initial scan failed:", error.message));

@@ -40,6 +40,7 @@ async function scrape() {
 
     const state = {
       ...getState(),
+      source: require("./config").sourceUrl,
       lastScan: new Date().toISOString(),
       startedAt: started,
       pagesVisited: result.pagesVisited,
