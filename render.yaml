@@ -10,7 +10,7 @@ services:
       - key: SOURCE_URL
         value: https://www5.zimsec.co.zw/download-category/o-level/
       - key: SOURCE_URLS
-        value: https://www5.zimsec.co.zw/download-category/a-level/
+        value: https://www5.zimsec.co.zw/download-category/a-level/,https://www5.zimsec.co.zw/download-category/specimen-papers/,https://zimsecpapers.github.io/
       - key: MAX_CRAWL_DEPTH
         value: 3
       - key: MAX_PAGES
