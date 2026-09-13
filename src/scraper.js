@@ -45,6 +45,7 @@ async function scrape() {
       startedAt: started,
       pagesVisited: result.pagesVisited,
       foundPdfs: result.pdfs.length,
+      errors: result.errors || [],
       newPapers: added,
       downloaded,
       failedDownloads

@@ -3,7 +3,11 @@ const path = require("path");
 const config = require("./config");
 
 async function downloadPdf(url, id) {
-  const response = await fetch(url, { redirect: "follow" });
+  const response = await fetch(url, {
+    redirect: "follow",
+    signal: AbortSignal.timeout(config.requestTimeout),
+    headers: { "user-agent": "ZIMSEC-Papers-Scraper/1.0" }
+  });
   if (!response.ok) throw new Error(`Download failed: ${response.status}`);
 
   const contentType = (response.headers.get("content-type") || "").toLowerCase();

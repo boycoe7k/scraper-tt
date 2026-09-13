@@ -39,7 +39,11 @@ async function discoverScriptPdfs($, pageUrl, pdfs) {
   for (const src of scripts) {
     try {
       const scriptUrl = new URL(src, pageUrl).toString();
-      const response = await fetch(scriptUrl, { redirect: "follow" });
+      const response = await fetch(scriptUrl, {
+        redirect: "follow",
+        signal: AbortSignal.timeout(config.requestTimeout),
+        headers: { "user-agent": "ZIMSEC-Papers-Scraper/1.0" }
+      });
       if (!response.ok) continue;
       const source = await response.text();
       if (!source.includes("downloadURL")) continue;
@@ -65,6 +69,7 @@ async function crawl() {
   const queue = [...new Set(seeds)].map(url => ({ url, depth: 0 }));
   const visited = new Set();
   const pdfs = [];
+  const errors = [];
 
   while (queue.length && visited.size < config.maxPages) {
     const current = queue.shift();
@@ -72,15 +77,25 @@ async function crawl() {
     visited.add(current.url);
 
     try {
-      const res = await fetch(current.url, { redirect: "follow" });
-      if (!res.ok) continue;
+      const res = await fetch(current.url, {
+        redirect: "follow",
+        signal: AbortSignal.timeout(config.requestTimeout),
+        headers: { "user-agent": "ZIMSEC-Papers-Scraper/1.0" }
+      });
+      if (!res.ok) {
+        errors.push({ url: current.url, error: `HTTP ${res.status}` });
+        continue;
+      }
 
       const type = res.headers.get("content-type") || "";
       if (type.includes("application/pdf") || current.url.toLowerCase().endsWith(".pdf")) {
         pdfs.push({ url: current.url, title: current.url.split("/").pop() });
         continue;
       }
-      if (!type.includes("text/html")) continue;
+      if (!type.includes("text/html")) {
+        errors.push({ url: current.url, error: `Unsupported content type: ${type || "unknown"}` });
+        continue;
+      }
 
       const html = await res.text();
       const $ = cheerio.load(html);
@@ -106,12 +121,14 @@ async function crawl() {
       });
 
       await sleep(config.requestDelay);
-    } catch {}
+    } catch (error) {
+      errors.push({ url: current.url, error: error.message });
+    }
   }
 
   const unique = new Map();
   for (const pdf of pdfs) unique.set(pdf.url, pdf);
-  return { pagesVisited: visited.size, pdfs: [...unique.values()] };
+  return { pagesVisited: visited.size, pdfs: [...unique.values()], errors };
 }
 
 module.exports = { crawl };

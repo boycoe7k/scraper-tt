@@ -17,6 +17,8 @@ services:
         value: 250
       - key: REQUEST_DELAY_MS
         value: 1000
+      - key: REQUEST_TIMEOUT_MS
+        value: 20000
       - key: MAX_DOWNLOAD_MB
         value: 30
       - key: CRON_SCHEDULE
